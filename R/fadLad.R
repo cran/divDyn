@@ -19,6 +19,7 @@
 #' @param bin \code{(character)}: The column name of bin variable. If two column names are entered, then they will interpreted as the minimum and maximum age uncertainty. (see examples) 
 #' @param ages \code{(logical)}: Are the bin entries ages (reversed time axis)? Setting ages to TRUE will replace the entries in 'bin' column(s) with their additive inverses.
 #' @param na.rm \code{(logical)}: Should taxa that have no valid FADs or LADs (due to only NA entries) be removed from the output?
+#' @param zerodur \code{(logical)}: If set to \code{TRUE}, single-interval taxa will 0 durations. Setting this argument to FALSE will add 1 to the durations of all taxa, which can be useful for binned data.
 #' @examples 
 #' data(corals)
 #' 
@@ -36,7 +37,7 @@
 #' 
 #' @rdname fadlad
 #' @export
-fadlad<-function(dat, tax, bin, ages=FALSE, na.rm=TRUE){
+fadlad<-function(dat, tax, bin, ages=FALSE, na.rm=TRUE, zerodur=TRUE){
 	# for the prototype
 #	dat <- corals
 #	tax<- "genus"
@@ -58,7 +59,8 @@ fadlad<-function(dat, tax, bin, ages=FALSE, na.rm=TRUE){
 	if(ages){
 		for(i in 1:length(bin)) binVar[,i] <- -binVar[,i]
 	}
-		
+	
+
 	# single iteration
 	tempFL<-tapply(INDEX=taxVar, X=1:nrow(dat), FUN=function(x){
 		# taxon specific part
@@ -81,6 +83,9 @@ fadlad<-function(dat, tax, bin, ages=FALSE, na.rm=TRUE){
 		
 	# calculate durations
 		fl$duration <- abs(fl[,"FAD"]-fl[,"LAD"])
+		if(!zerodur){
+			fl$duration <- fl$duration+1
+		}
 		
 	# add the species names
 	rownames(fl)<- names(tempFL)
@@ -89,6 +94,10 @@ fadlad<-function(dat, tax, bin, ages=FALSE, na.rm=TRUE){
 		fl<-fl[!is.na(fl[,"FAD"]),]
 	}
 	
+	if(any(""==rownames(fl))){
+		warning("Taxon name <\"\"> (empty quotes) is detected!")
+	}
+
 	return(fl)
 	
 }
@@ -126,7 +135,7 @@ fadlad<-function(dat, tax, bin, ages=FALSE, na.rm=TRUE){
 #' 
 #' # plot
 #' data(stages)
-#' tsplot(stages, shading="series", boxes="per", xlim=c(260,0), 
+#' tsplot(stages, shading="series", boxes="sys", xlim=c(260,0), 
 #'   ylab="proportion of survivors present", ylim=c(0.01,1),plot.args=list(log="y"))
 #'   
 #' for(i in 1:ncol(surv)) lines(stages$mid, surv[,i])

@@ -1,157 +1,3 @@
-#' Cleanse Species Vector
-#' 
-#' This function will take a vector of binomial names with various qualifiers of open nomenclatures, and removes them form the vector entries. Only the the genus and species names will remain.
-#'
-#' This version will not keep subgenera, and will assign species to the base genus. The following qualifiers will be omitted:
-#' \emph{"n."}, \emph{"sp."}, \emph{"?"}, \emph{"gen."}, \emph{"aff."}, \emph{"cf."}, \emph{"ex gr."}, \emph{"subgen."}, \emph{"spp"} and informal species designated with letters. Entries with \emph{"informal"} and \emph{"indet."} in them will also be invalidated. 
-#' 
-#' @param vec \code{(character)}: the vector containing species names with qualifiers of open taxonomy.
-#'
-#' @param mode \code{(character)}: either \code{"simple"} or \code{"debug"}. \code{"simple"} will return the cleaned species name vector, \code{"debug"} returns a data table that allows one by one checking.
-#' @param collapse \code{(character)}: this argument will be passed to the paste function's argument of the same name. The character value to be inserted between the genus and species names.
-#'
-#' @examples
-#' examp <- c("Genus cf. species", "Genus spp.", "Family indet.", 
-#'   "Mygenus yourspecies", "Okgenus ? questionsp")
-#' spCleanse(examp) 
-#' @export
-# function to cleanse a noisy species name vector
-spCleanse <- function(vec, mode="simple", collapse="_"){
-	
-	# keep the original
-	vecOrig<-vec
-	# presplit for parenthesis error
-	vec<-gsub("\\( ", "\\(", vec)
-	
-	# presplit the the double space error
-	vec<-gsub("  ", " ", vec)
-	
-	# split the string
-	split<-strsplit(vec, " ")
-	
-	# excluded parts
-		# these entries will be omitted without further issues	
-		exclude <- c("n.", "sp.", "?", "gen.", "aff.", "cf.", "ex", "gr.", "subgen.", paste(LETTERS, ".", sep=""), "spp.")
-		
-		# if elements of this list are found in pairs, those will be excluded (but only if both are found, so species name "lato" can be left)
-		jointExclude<-list(c("sensu", "lato"), c("sensu", "stricto"))
-	
-		# if these entries are round, the species name will be invalid
-		special <- c("sp.1","sp.2", "informal", "indet.", letters)
-	
-	
-	dual<-lapply(split, function(x){
-	# missing entries
-		if(sum(is.na(x))==length(x)){
-			return(NA, NA)
-		}
-	
-	#is a name starting with quotes - remove quotes
-		
-		quotes<-sapply(x, function(y){
-			substr(y, 1,1)%in%c("\"")
-		})
-		if(sum(quotes)>0){
-			tem<-unlist(strsplit(x[quotes], "\""))[2]
-			x[quotes]<-tem
-		}
-		
-	# is there a subgenus name - omit it
-		# first character is parenthesis- omit
-		parenth1<-sapply(x, function(y){
-			substr(y, 1,1)=="("
-		})
-		
-		if(sum(parenth1)>0){
-			x<-x[!parenth1]
-		}
-		
-		#last character is parenthesis- omit
-		parenth2<-sapply(x, function(y){
-			substr(y, nchar(y),nchar(y))==")"
-		})
-		
-		if(sum(parenth2)>0){
-			x<-x[!parenth2]
-		}
-		
-	# omit the prefixes and suffixes
-		x<-x[!x%in%exclude]
-		
-	# omit the jointly occurring notes (e.g. 'sensu lato')
-		jointOcc<-unlist(lapply(jointExclude, function(y){
-			sum(y%in%x)==length(y)
-		
-		}))
-		if(sum(jointOcc)>0){
-			je<-jointExclude[jointOcc]
-			for(i in 1:length(je)){
-				x<-x[!x%in%je[[i]]]
-			}
-			
-		}
-		
-	# if there is a non-valid species name indicator - remove the entry
-		if(sum(x%in%special)>0){
-			return(c(NA, NA))
-		}
-		numConvert<-suppressWarnings(as.numeric(x))
-		if(sum(!is.na(numConvert))>0){
-			return(c(NA, NA))
-		}
-		
-		if(length(x)==1){
-			return(c(NA, NA))
-		}
-	
-		
-	# return genus and species name - potentially subspecies and crap at the end
-		return(x)
-	
-	})
-	
-#	# not two
-#	len<-unlist(lapply(dual, length))!=2
-#	
-#	
-#	View(cbind(gen,sp)[len,])
-#	
-#	prob<-vec[len]
-#	View(prob)
-	
-	# merge the genus and species in one column
-	singular<-unlist(lapply(dual, function(x){
-		if(is.na(x[1])){
-			return(NA)
-		}else{
-			paste(x[1:2], collapse=collapse)
-		}
-	}))
-	
-	# if names start with " omit those as well
-	# omit parentheses
-	if(mode=="debug"){
-		
-		gen<-unlist(lapply(dual, function(x){
-			x[1]
-		}))
-		
-		sp<-unlist(lapply(dual, function(x){
-			x[2]
-		
-		}))
-	
-		dat<-data.frame(original=vecOrig,genus=gen,species=sp, omitted=rep(FALSE, length(gen)))
-		dat$omitted[is.na(singular)] <- TRUE
-		dat$binomen <- singular
-		return(dat)
-	}
-	if(mode=="simple"){
-		return(singular)
-	}
-}
-
-
 #' Time series from metrics of diversity dynamics 
 #' 
 #' This function calculates various metrics from occurrence datasets in the form of time series.
@@ -212,13 +58,13 @@ spCleanse <- function(vec, mode="simple", collapse="_"){
 #'
 #' \code{oriGF}: Gap-filler origination rates of Alroy(2014). \emph{log((t2u + tPart)/(t3+tPart+tGFd))}
 #'
-#' \code{E2f3}: Second-for-third extinction propotions of Alroy (2015). As these metrics are based on an algorithmic approach, for the equations please refer to the Alroy (2015, p. 634, right column and Eq. 5)). See source code (\url{http://www.github.com/adamkocsis/divDyn}) for the exact implementation, found in the \code{Metrics} function in the diversityDynamics.R file.
+#' \code{E2f3}: Second-for-third extinction propotions of Alroy (2015). As these metrics are based on an algorithmic approach, for the equations please refer to the Alroy (2015, p. 634, right column and Eq. 4)). See source code (\url{http://www.github.com/adamkocsis/divDyn}) for the exact implementation, found in the \code{Metrics} function in the diversityDynamics.R file.
 #'
 #' \code{O2f3}: Second-for-third origination propotions of Alroy (2015). Please see \code{E2f3}.
 #'
-#' \code{ext2f3}: Second-for-third extinction rates (based on Alroy, 2015). Transformed to the classical rate form with \emph{log(1/(1-E2f3))}.
+#' \code{ext2f3}: Second-for-third extinction rates (based on Alroy, 2015). Transformed to the usual rate form with \emph{log(1/(1-E2f3))}.
 #'
-#' \code{ori2f3}: Second-for-third origination rates (based on Alroy, 2015). Transformed to the classical rate form with \emph{log(1/(1-O2f3))}.
+#' \code{ori2f3}: Second-for-third origination rates (based on Alroy, 2015). Transformed to the usual rate form with \emph{log(1/(1-O2f3))}.
 #' 
 #' \strong{References:}
 #'
@@ -234,12 +80,12 @@ spCleanse <- function(vec, mode="simple", collapse="_"){
 #' 
 #' @param tax \code{(character)} Variable name of the occurring taxa (variable type: \code{factor} or \code{character} - such as \code{"genus"}
 #' 
-#' @param bin \code{(character)} Variable name of the bin numbers of the particular occurrences. This variable should be \code{numeric} and should increase as time passes by (use negative values for age estimates). 
+#' @param bin \code{(character)} Variable name of the bin numbers of the occurrences. This variable should be \code{numeric}. 
 #'
+#' @param ages \code{(logical)} Argument for setting the direction of time in \code{bin}. The default setting, \code{FALSE} will execute the function with higher numbers corresponding to later intervals. \code{TRUE} will reverse the direction of values in the \code{bins} variable, making originations extinctions and vice versa (use this for age input!, e.g 400 Ma, see examples). 
 #' @param breaks \code{(numeric)} If \code{NULL} (default) the used values in the \code{bin} variable will designate independent time slices that follow each other in succession. If a vector is provided, than the numeric entries in \code{bin} will be binned similarly to the \code{\link[graphics]{hist}} or \code{\link[base]{cut}} function. The order of elements in this vector is arbitrary.
-#' @param noNAStart (logical) Useful when the dataset does not start from bin no. 1, but positive integer bin numbers are provided. Then \code{noNAStart=TRUE} will cut the first part of the resulting table, so the first row will contain the estimates for the lowest bin number. In case of positive integer bin identifiers, and if \code{noNAStart=FALSE}, the index of the row will be the bin number. 
+#' @param noNAStart (logical) Useful when the entries in the \code{bin} variable do not start from bin no. 1, but positive integer bin numbers are provided. Then \code{noNAStart=TRUE} will cut the first part of the resulting table, so the first row will contain the estimates for the lowest bin number. In case of positive integer bin identifiers, and if \code{noNAStart=FALSE}, the index of the row will be the bin number. 
 #' 
-#' @param inf \code{(logical)} Should \code{Inf} values be converted to \code{NA}s?
 #' @param data.frame \code{(logical)} Should the output be a \code{data.frame} or a \code{matrix}?
 #' 
 #' @param om \code{(character)} The \code{om} argument of the \code{omit()} function. If set to \code{NULL} (default), then no occurrences will be omitted before the execution of the function.
@@ -255,7 +101,7 @@ spCleanse <- function(vec, mode="simple", collapse="_"){
 #'    dd <- divDyn(corals, tax="genus", bin="stg")
 #'
 #'	# plotting
-#'	  tsplot(stages, shading="series", boxes="per", xlim=c(260,0), 
+#'	  tsplot(stages, shading="series", boxes="sys", xlim=c(260,0), 
 #'	    ylab="range-through diversity (genera)", ylim=c(0,230))
 #'	  lines(stages$mid, dd$divRT, lwd=2)
 #' 
@@ -264,11 +110,12 @@ spCleanse <- function(vec, mode="simple", collapse="_"){
 #'    lines(stages$mid, ddNoSing$divRT, lwd=2, col="red")
 #'
 #'  # using the estimated ages (less robust) - 10 million years
-#'    # mean ages (should be negative to maintain order)
-#'    corals$me_ma <- -apply(corals[, c("max_ma", "min_ma")], 1, mean)
-#'    # divDyn
-#'    ddRadio10 <- divDyn(corals, tax="genus", bin="me_ma", breaks=seq(0,-250,-10))
-#'    lines(-ddRadio10$bin, ddRadio10$divRT, lwd=2, col="green")
+#'    # mean ages
+#'    corals$me_ma <- apply(corals[, c("max_ma", "min_ma")], 1, mean)
+#'    # ages reverse the direction of time! set ages to TRUE in this case
+#'    ddRadio10 <- divDyn(corals, tax="genus", bin="me_ma", 
+#'		breaks=seq(250,0,-10), ages=TRUE)
+#'    lines(ddRadio10$bin, ddRadio10$divRT, lwd=2, col="green")
 #'       
 #'  # legend
 #'    legend("topleft", legend=c("all", "no single-ref. taxa", "all, estimated ages"), 
@@ -276,84 +123,31 @@ spCleanse <- function(vec, mode="simple", collapse="_"){
 #'    
 #'
 #' @export
-divDyn <- function(dat, tax="genus", bin="bin", breaks=NULL, coll="collection_no", ref="reference_no", om=NULL,noNAStart=F, inf=F, data.frame=T, filterNA=FALSE)
+divDyn <- function(dat, tax, bin, ages=FALSE, breaks=NULL, coll="collection_no", ref="reference_no", om=NULL,noNAStart=FALSE, data.frame=TRUE, filterNA=FALSE)
 {
 	
+#	# tral run
+#	dat<-corals
+#	bin<-"stg"
+#	tax<- "genus"
+#	ages <- FALSE
+#	breaks<-NULL
+
 	# checking the binning argument
 	# is numeric
 	if(!is.numeric(dat[,bin])){
 		stop("The bin variable is not numeric.")
 	}
 	
-	# what do you want to do with the bin numbers?
-	# nothing, individual time slices
-	if(is.null(breaks)){
-		
-		# if bin values are integers
-		if(sum(dat[,bin]%%1, na.rm=T)==0){
-			
-			# smallest bin value
-			minBin<-min(dat[,bin], na.rm=T)
-			
-			# if non-positive entries occurr
-			if(minBin<=0){
-				# transformation is necessary (shift by three, to make sure the C++ function works appropriately)
-				dat[,bin]<-5+dat[,bin]-minBin
-				binID<-c(rep(NA, 4), sort(unique(dat[,bin]))-5+minBin)
-			
-			# if no transformation will be necessary
-			}else{
-				binID<-NULL
-			}
-			
-		# non-integers: factorization
-		}else{
-			# use plain factorization values
-			fact<-factor(dat[,bin])
-			
-			newBin<-as.numeric(fact) + 4 # add some offset 
-			
-			# replace bin numbers with positive integers
-			dat[,bin] <- newBin
-			
-			# use later
-			binID<-c(rep(NA,4),as.numeric(levels(fact)))
-			
-		}
-	
-	# use a predefined binning of numeric values
-	}else{	
-		if(!is.numeric(breaks)) stop("The breaks argument has to be a numeric vector. ")
-		
-		# order the breaking vector 
-		breaks<-sort(breaks)
-		
-		# calculate the bin averages
-		both<-cbind(c(breaks,NA),c(NA, breaks))
-		means<-apply(both, 1, mean)
-		means<-means[!is.na(means)]
-		
-		# bin the variable
-		fact<-cut(dat[,bin], breaks)
-		
-		# the function will use this to output the data
-		newBin<-as.numeric(fact)
-		
-		if(length(unique(newBin))<4) stop("At least 4 time slices are necessary.")
-		
-		# replace bin numbers with positive integers
-		dat[,bin] <- newBin
-		
-		# save the relevant means, use the binID later to identify the position
-	
-		to<-max(newBin,na.rm=T)
-		binID<-c(rep(NA,4),means[1:to])
-		
-		 # add 4 as an offset
-		 dat[,bin]<-dat[,bin]+4
-		
+	if(ages){
+		dat[, bin] <- -dat[,bin]
+		if(!is.null(breaks)) breaks <- -breaks
 	}
 	
+	# appropriate treatment of binning data
+	off <- 4
+	aubi <- autoBin(dat[,bin], breaks=breaks, offset=off)
+	dat[,bin] <- aubi$y
 	
 	# the omission phase
 	if(!is.null(om)){
@@ -365,23 +159,15 @@ divDyn <- function(dat, tax="genus", bin="bin", breaks=NULL, coll="collection_no
 	
 	# omit NAs
 	bNeed<- !(is.na(subDat[,tax]) | is.na(subDat[,bin]))
+
 	# taxon vars
 	taxVar<-subDat[bNeed, tax]
 	binVar<-subDat[bNeed, bin]
 
-	#the maximum number of time slices
-	nVectorLength<-max(binVar, na.rm=T)
-	
-	#starting interval
-	nStart<-min(binVar, na.rm=T)
-	
-	#ending interval
-	nEnd<-max(binVar, na.rm=T)
-	
-	#the vector of time slice numbers
-	nTimeSlice<-c(rep(NA, nStart-1), nStart:nEnd)
-	
-	
+	if(any(""==taxVar)){
+		warning("Taxon name <\"\"> (empty quotes) is detected!")
+	}
+
 	# factorize
 	taxVar <- as.numeric(factor(taxVar))
 	
@@ -389,30 +175,26 @@ divDyn <- function(dat, tax="genus", bin="bin", breaks=NULL, coll="collection_no
 	taxVar<-taxVar-1
 	binVar<-binVar-1
 	
-	# here comes the counts variables
+	# here come the counts variables
 	counts <- Counts(taxVar,binVar)
 
 	# the metrics
 	metrics <- Metrics(counts)
-							 
-	if(inf!=T)
-	{
-		metrics[is.infinite(metrics)]<-NA
-		
-	}
 	
+	# replace infinites with NAs
+	metrics[!is.finite(metrics)]<-NA
+
+	# concatenate the columns
+	dCountsAndMetrics<-cbind(counts, metrics)
+		
+	# delete the safety offset
+	dCountsAndMetrics<- dCountsAndMetrics[(off+1):nrow(dCountsAndMetrics), ]
+
 	# cbind all together
-	dCountsAndMetrics<-cbind(bin=nTimeSlice,  counts, metrics)
+	dCountsAndMetrics<-cbind(bin=aubi$z, dCountsAndMetrics)
 	
-	if(!is.null(binID)){
-		dCountsAndMetrics[,"bin"]<-binID
-		
-		# and get rid of the NAs
-		dCountsAndMetrics<-dCountsAndMetrics[5:nrow(dCountsAndMetrics),]
-	}
-		
 	#create the returning table
-	dCountsAndMetrics<-dCountsAndMetrics[,c(
+	columns <- c(
 		"bin",
 		"t2d",
 		"t2u",
@@ -444,7 +226,8 @@ divDyn <- function(dat, tax="genus", bin="bin", breaks=NULL, coll="collection_no
 		"ori2f3",
 		"samp3t",
 		"sampRange"
-	)]
+	)
+	dCountsAndMetrics<-dCountsAndMetrics[,columns]
 	
 	if(data.frame){				
 		dCountsAndMetrics<-as.data.frame(dCountsAndMetrics, stringsAsFactors=F)
@@ -453,22 +236,37 @@ divDyn <- function(dat, tax="genus", bin="bin", breaks=NULL, coll="collection_no
 	
 	#!!!nTot3tSampComp
 
-	#want to see the NA's at the beginnning? (when the time series does not start with bin 1)
-		if (missing(noNAStart)) {}
-		else
-		{
-			if (noNAStart==TRUE)
-			{
-				dCountsAndMetrics<-dCountsAndMetrics[nStart:nEnd,]
-			}
-			
-			if (noNAStart!=TRUE & noNAStart!=FALSE)
-			{
-				print("You have entered an invalid argument for noNAStart, no cropping will occurr in the final table.")
-			}
-		}	
+	# coerce NAs in variables and intervals where they were not supposed to be
+		# first row
+		dCountsAndMetrics[1,c("t2d","t3","tPart","tGFd","tGFu", "tThrough", "tExt", "divBC", "O2f3")] <- NA
+		dCountsAndMetrics[2,c("tGFd","oriGF", "ori2f3", "O2f3")] <- NA
 	
+		# last row
+		nEnd<-nrow(dCountsAndMetrics)
+		dCountsAndMetrics[nEnd,c("t2u","t3","tPart","tGFd","tGFu", "ext2f3", "tOri", "tThrough", "E2f3")] <- NA
+		dCountsAndMetrics[nEnd-1,c("tGFu","extGF", "ext2f3", "E2f3")] <- NA
+
+	#want to see the NA's at the beginnning? 
+	# only use noNAStart when the simple indices are used	
+	if (!noNAStart){
+		# only if it is applicable - e.g. 
+		firstBin <- min(dCountsAndMetrics[,"bin"]) 
+		
+		# (when the time series does not start with bin 1 and integers)
+		if(sum((dCountsAndMetrics[,"bin"]%%1)==0)==nEnd & firstBin>0){
+			empty <- matrix(NA, nrow=firstBin-1, ncol=ncol(dCountsAndMetrics))
+			colnames(empty) <- columns
+			dCountsAndMetrics<-rbind(empty,dCountsAndMetrics)
+			rownames(dCountsAndMetrics)<-NULL
+		}
+		
+	}
 	
+	# cosmetic changes		
+	if(ages){
+		dCountsAndMetrics[,"bin"]<- -dCountsAndMetrics[,"bin"]
+	}
+		
 	#return the table					
 	return(dCountsAndMetrics)
 }
@@ -644,7 +442,7 @@ Metrics<- function(counts){
 #' 
 #' # within divDyn
 #'   # plotting
-#'	  tsplot(stages, shading="series", boxes="per", xlim=c(260,0), 
+#'	  tsplot(stages, shading="series", boxes="sys", xlim=c(260,0), 
 #'	    ylab="range-through diversity (genera)", ylim=c(0,230))
 #'   # multiple ref/slice required
 #'   ddNoSing <- divDyn(corals, tax="genus", bin="stg", om="binref")
@@ -740,6 +538,73 @@ omit <- function(dat, tax="genus", bin="bin", coll="collection_no", ref="referen
 }
 
 
+# The autobin utility function to perform the reliable discretization of the time dimension
+# 	# testing and developmental snippets:
+# 	library(divDyn)
+# 	data(corals)
+# 	
+# 	# start with the different stage identifiers
+# 	x<- corals$stg-50
+# 	x<- apply(corals[, c("min_ma", "max_ma")], 1,mean)
+# 	offset <- 4
+# 	breaks<-NULL
+# 	breaks<-seq(300, 0, -25)
+# 	
+# before function is run, do reversion of time axis if necessary!
+autoBin<-function(x, offset=4,breaks=NULL){
+	# only allow to pass through if it is numeric
+	if(!is.numeric(x)) stop("The provided time vector is not numeric.")
+
+	# when there are no breaks (bin identifiers were supposed to be used as provided)
+	if(is.null(breaks)){
+		# get levels
+		z <- sort(unique(x))
+
+		# if there are integer entries coerce continuous numbering for the output
+		# and use only shifts of values, rather than replacement (much faster)
+		if(sum(z%%1==0)==length(z)) {
+			minZ<-min(z)
+			maxZ<-max(z)
+			z<-minZ:maxZ
+
+			# shift the ranks 
+			y<- x-minZ+1+offset
+
+		}else{
+
+			ranks <- rank(z)+offset
+			names(ranks) <- z
+	
+			# the NAs
+			notNA <- !is.na(x)
+			y<-rep(NA, length(x))
+	
+			# create the new bin vector
+			y[notNA]<-ranks[as.character(x[notNA])]
+		}
+	# breaks are present
+	}else{
+		# first, sort the breaks
+		breaks<-sort(breaks)
+		# cut the vector
+		y <- cut(x, breaks=breaks, labels=FALSE)
+		z<-apply(
+			cbind(
+				breaks[1:(length(breaks)-1)],
+				breaks[2:length(breaks)]),
+			1, mean)
+
+		y<- y+offset
+	}
+	return(list(y=y, z=z))
+}
+
+# after function is run, constrain the omission of NAs
+
+
 .onUnload <- function (libpath) {
 	library.dynam.unload("divDyn", libpath)
 }
+
+
+

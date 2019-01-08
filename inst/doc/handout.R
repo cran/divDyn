@@ -11,14 +11,27 @@ library(divDyn)
 data(stages)
 
 ## ----tsplot1, echo= TRUE, plot=TRUE, fig.height=5.5----------------------
-tsplot(stages, boxes="per", shading= "series")
+tsplot(stages, boxes="sys", shading= "series")
 
 ## ----tsplot2, echo= TRUE, plot=TRUE, fig.height=5.5----------------------
-tsplot(stages, boxes="period", shading="stage", xlim=59:81)
+tsplot(stages, boxes="system", shading="stage", xlim=59:81)
 
 ## ----tsplot3, echo= TRUE, plot=TRUE, fig.height=5.5----------------------
-tsplot(stages, boxes="per", shading="series", 
+tsplot(stages, boxes="sys", shading="series", 
   labels.args=list(col="red", font=3), shading.col=c("white", "wheat"))
+
+## ----tsplot4, echo= TRUE, plot=TRUE, fig.height=5.5----------------------
+tsplot(stages, boxes=c("sys"), shading="sys", boxes.col="systemCol")
+
+## ----tsplot5, echo= TRUE, plot=TRUE, fig.height=5.5----------------------
+tsplot(stages, boxes=c("short","system"), shading="short", 
+  xlim=59:69, boxes.col=c("col","systemCol"), labels.args=list(cex=0.5))
+
+## ----tsplot6, echo= TRUE, plot=TRUE, fig.height=5.5----------------------
+tsplot(stages, boxes=c("short","system"), shading="short", 
+  xlim=59:69, boxes.col=c("col","systemCol"),
+  labels.args=list(list(cex=0.5),list(cex=1)),
+  boxes.args=list(list(),list(density=80)))
 
 ## ----examp, echo= FALSE, results=TRUE------------------------------------
 structure <- data.frame(
@@ -42,7 +55,7 @@ fl <- fadlad(fossils, bin="stg", tax="genus")
 ## ----ranplot, echo= TRUE, plot=TRUE, fig.height=5.5----------------------
 fossils$mid <- stages$mid[fossils$stg]
 
-tsplot(stages, shading="series", boxes="per",xlim=c(260,0))
+tsplot(stages, shading="series", boxes="sys",xlim=c(260,0))
 
 ranges(fossils, tax="genus", bin="mid")
 
@@ -68,7 +81,7 @@ surv <- survivors(corals, bin="stg", tax="genus")
 
 ## ----survTsplotblank, echo=TRUE, plot=TRUE, fig.height=5.5---------------
 # time scale plot
-tsplot(stages, shading="series", boxes="per", 
+tsplot(stages, shading="series", boxes="sys", 
   xlim=c(260,0), ylab="proportion of survivors present",
   ylim=c(0.01,1),plot.args=list(log="y"))
 
@@ -78,7 +91,7 @@ tsplot(stages, shading="series", boxes="per",
 
 ## ----survTsplot1, echo=FALSE, plot=TRUE, fig.height=5.5------------------
 # time scale plot
-tsplot(stages, shading="series", boxes="per", xlim=c(260,0),
+tsplot(stages, shading="series", boxes="sys", xlim=c(260,0),
   ylab="proportion of survivors present", 
   ylim=c(0.01,1),plot.args=list(log="y"))
 # lines for every cohort
@@ -87,7 +100,7 @@ for(i in 1:ncol(surv)) lines(stages$mid, surv[,i])
 ## ----survTsplot2, echo=FALSE, plot=TRUE, fig.height=5.5------------------
 survFor<-survivors(corals, tax="genus", bin="stg", method="backward")
 # plot
-tsplot(stages, shading="series", boxes="per", 
+tsplot(stages, shading="series", boxes="sys", 
   xlim=c(260,0), ylab="proportion of constituents present",
   ylim=c(0.001,1),plot.args=list(log="y"))
 # for every cohort
@@ -110,7 +123,7 @@ colnames(samp)
 ## ----occsAndColls, echo=TRUE, result=FALSE, plot=TRUE, fig.height=5.5----
 par(mar=c(4,4,2,4))
 # basic plot
-tsplot(stages, shading="series", boxes="per", xlim=51:95,
+tsplot(stages, shading="series", boxes="sys", xlim=51:95,
     ylab="number of occurrences", ylim=c(0,3000))
 lines(stages$mid[1:94], samp$occs)
 # the collections (rescaled, other axis)
@@ -123,7 +136,7 @@ lines(stages$mid[1:94], samp$occs)
 # numerical ages, as bins
 fossils$stgMid <- stages$mid[fossils$stg]
 #plotting
-tsplot(stages, shading="series", boxes="per", xlim=51:95,
+tsplot(stages, shading="series", boxes="sys", xlim=51:95,
   ylab="number of occurences", ylim=c(0,3000))
 parts(fossils$stgMid, fossils$bath)
 
@@ -132,14 +145,14 @@ cols <- c("#FF0000AA", "#00FF00AA", "#0000FFAA")
 # reorder too
 reord <- c("shal","deep","uk")
 plotnames <-c("shallow", "deep", "unknown")
-tsplot(stages, shading="series", boxes="per", xlim=51:95,
+tsplot(stages, shading="series", boxes="sys", xlim=51:95,
     ylab="the number of occurrences", ylim=c(0,3000))
 parts(fossils$stgMid, fossils$bath, col=cols, ord=reord, labs=F)
 legend("topleft", inset=c(0.01, 0.01), 
   legend= plotnames, fill=cols, bg="white")
 
 ## ----parts3, echo=TRUE, result=FALSE, plot=TRUE, fig.height=5.5----------
-tsplot(stages, shading="series", boxes="per", xlim=51:95,
+tsplot(stages, shading="series", boxes="sys", xlim=51:95,
     ylab="proportion of occurrences", ylim=c(0,1))
 parts(fossils$stgMid, fossils$bath, prop=T, col=cols, ord=reord, labs=F)
 legend("bottomleft", inset=c(0.01, 0.1), 
@@ -161,7 +174,7 @@ ddFirst<-divDyn(corals, bin="stg", tax="genus", noNAStart=TRUE)
 # metrics
 ddRec <-divDyn(corals, bin="stg", tax="genus")
 # basic plot
-  tsplot(stages, shading="series", boxes="per", xlim=51:95,
+  tsplot(stages, shading="series", boxes="sys", xlim=51:95,
     ylab="range-through richness (diversity)", ylim=c(0,250))
 # lines
   lines(stages$mid, ddRec$divRT, col="black", lwd=2)
@@ -170,7 +183,7 @@ ddRec <-divDyn(corals, bin="stg", tax="genus")
 # metrics
 dd <-divDyn(fossils, bin="stg", tax="genus")
 # basic plot
-  tsplot(stages, shading="series", boxes="per", xlim=51:95,
+  tsplot(stages, shading="series", boxes="sys", xlim=51:95,
     ylab="richness (diversity)", ylim=c(0,250))
 # lines
   lines(stages$mid, ddRec$divRT, col="black", lwd=2)
@@ -182,7 +195,7 @@ dd <-divDyn(fossils, bin="stg", tax="genus")
 # metrics
 dd <-divDyn(fossils, bin="stg", tax="genus")
 # basic plot
-  tsplot(stages, shading="series", boxes="per", xlim=51:95,
+  tsplot(stages, shading="series", boxes="sys", xlim=51:95,
     ylab="richness (diversity)", ylim=c(0,250))
 # lines
   lines(stages$mid[1:94], dd$divRT, col="red", lwd=2)
@@ -194,14 +207,14 @@ dd <-divDyn(fossils, bin="stg", tax="genus")
 
 ## ----samp3t, echo=TRUE, result=FALSE, plot=TRUE, fig.height=5.5----------
 # basic plot
-  tsplot(stages, shading="series", boxes="per", xlim=51:95,
+  tsplot(stages, shading="series", boxes="sys", xlim=51:95,
     ylab="three-timer sampling completeness")
   # lines
   lines(stages$mid[1:94], dd$samp3t, col="black", lwd=2)
 
 ## ----ddCorr, echo=TRUE, result=FALSE, plot=TRUE, fig.height=5.5----------
 # basic plot
-  tsplot(stages, shading="series", boxes="per", xlim=51:95,
+  tsplot(stages, shading="series", boxes="sys", xlim=51:95,
     ylab="three-timer sampling completeness", ylim=c(0,250))
   lines(stages$mid[1:94], dd$divSIB, col="black", lwd=2)
   lines(stages$mid[1:94], dd$divCSIB, col="blue", lwd=2)
@@ -211,7 +224,7 @@ dd <-divDyn(fossils, bin="stg", tax="genus")
 
 ## ----ddExt, echo=TRUE, result=FALSE, plot=TRUE, fig.height=5.5-----------
 # basic plot
-  tsplot(stages, shading="series", boxes="per", xlim=51:95,
+  tsplot(stages, shading="series", boxes="sys", xlim=51:95,
     ylab="extinction rates", ylim=c(0,2))
   lines(stages$mid[1:94], dd$extPC, col="black", lwd=2)
   lines(stages$mid[1:94], dd$extGF, col="blue", lwd=2)
@@ -230,7 +243,7 @@ dd <-divDyn(fossils, bin="stg", tax="genus")
   ddAZ<-divDyn(az, tax="genus", bin="stg")
 
 # origination rate plot
-tsplot(stages, boxes="per", shading="series", xlim=54:95, 
+tsplot(stages, boxes="sys", shading="series", xlim=54:95, 
   ylab="raw per capita originations")
 lines(stages$mid[1:94], dd$oriPC, lwd=2, lty=1, col="black")
 lines(stages$mid[1:94], ddZ$oriPC, lwd=2, lty=1, col="blue")
@@ -282,8 +295,8 @@ rsAIC0.5
   ddAZ<-divDyn(az, tax="genus", bin="stg")
 
 # origination rate plot
-tsplot(stages, boxes="per", shading="series", xlim=54:95, 
-  ylab="raw per capita originations")
+tsplot(stages, boxes="sys", shading="series", xlim=54:95, 
+  ylab="raw sys capita originations")
 lines(stages$mid[1:94], dd$oriPC, lwd=2, lty=1, col="black")
 lines(stages$mid[1:94], ddZ$oriPC, lwd=2, lty=1, col="blue")
 lines(stages$mid[1:94], ddAZ$oriPC, lwd=2, lty=2, col="red")
@@ -314,7 +327,7 @@ ddIDbin <- divDyn(fossils, tax="genus", bin="mid_ma")
 
 ## ----ddBasic, echo=TRUE, result=FALSE, plot=TRUE, fig.height=5.5---------
 # basic plot
-  tsplot(stages, shading="series", boxes="per", xlim=51:95,
+  tsplot(stages, shading="series", boxes="sys", xlim=51:95,
     ylab="Diversity, range-through", ylim=c(0,300))
   lines(-ddIDbin$bin, ddIDbin$divRT, col="black", lwd=2)
   lines(stages$mid[1:94], dd$divRT, col="red", lwd=2)
@@ -337,7 +350,7 @@ legend("topleft", legend=c("unique mid entries",  "stg stages"),
 
 ## ----dd10actual, echo=FALSE, result=FALSE, plot=TRUE, fig.height=5.5-----
 # basic plot
-  tsplot(stages, shading="series", boxes="per", xlim=51:95,
+  tsplot(stages, shading="series", boxes="sys", xlim=51:95,
     ylab="Diversity, range-through", ylim=c(0,300))
   lines(-ddIDbin$bin, ddIDbin$divRT, col="black", lwd=2)
   lines(stages$mid[1:94], dd$divRT, col="red", lwd=2)
@@ -346,6 +359,25 @@ legend("topleft", legend=c("unique mid entries",  "stg stages"),
     "stg stages", "unique mid entries"), 
     col=c("blue", "red", "black"), lwd=c(2,2,2), bg="white")
 
+## ----modelta, echo=TRUE--------------------------------------------------
+# basic function call
+  mtab <-  modeltab(corals, tax="genus", bin="stg") 
+  mtab[mtab[,"genus"]=="Acanthogyra",]
+
+## ----modelta2, echo=TRUE-------------------------------------------------
+# basic function call
+  mtabrt <- modeltab(corals, tax="genus", bin="stg", rt=TRUE) 
+  mtabrt[mtabrt[,"genus"]=="Acanthogyra",]
+
+## ----modelta3, echo=TRUE-------------------------------------------------
+# function call with additional taxon-specific variables
+  modTab<- modeltab(corals, tax="genus", bin="stg", 
+    rt=TRUE, taxvars=c("ecology", "growth")) 
+  modTab[1:10,]
+
+## ----modelta4, echo=TRUE-------------------------------------------------
+  simpleMod<- glm(ext ~ ecology + growth, family="binomial", data=modTab)
+
 ## ----sampCor, echo=TRUE, result=TRUE-------------------------------------
 sam <-binstat(fossils, bin="stg", tax="genus", coll="collection_no", duplicates=F)
 cor.test(dd$divRT, sam$occs, method="spearman")
@@ -353,7 +385,7 @@ cor.test(dd$divSIB, sam$occs, method="spearman")
 
 ## ----ddCRBasic, echo=TRUE, results=FALSE, plot=TRUE, fig.height=5.5------
 # basic plot
-  tsplot(stages, shading="series", boxes="per", xlim=51:95,
+  tsplot(stages, shading="series", boxes="sys", xlim=51:95,
     ylab="SIB diversity", ylim=c(0,200))
 # raw diversity
   lines(stages$mid[1:94], dd$divCSIB, col="black", lwd=2)
@@ -371,7 +403,7 @@ cor.test(dd$divSIB, sam$occs, method="spearman")
 
 ## ----subIter, echo=TRUE, results =FALSE, plot=TRUE, fig.height=5.5-------
 # basic plot
-  tsplot(stages, shading="series", boxes="per", xlim=51:95,
+  tsplot(stages, shading="series", boxes="sys", xlim=51:95,
     ylab="genus richness (corrected SIB)", ylim=c(0,200))
   lines(stages$mid[1:94], dd$divCSIB, col="black", lwd=2)
 ## subsampled, stable  
@@ -390,7 +422,7 @@ cor.test(dd$divSIB, sam$occs, method="spearman")
   subCRnd <- subsample(fossils, bin="stg", tax="genus", 
     coll="collection_no", iter=100, q=40, duplicates=FALSE)
 # basic plot
-  tsplot(stages, shading="series", boxes="per", xlim=51:95,
+  tsplot(stages, shading="series", boxes="sys", xlim=51:95,
     ylab="number of occurrences", ylim=c(0,100))
   lines(stages$mid[1:94], subCR40$divCSIB, col="blue", lwd=2)
   lines(stages$mid[1:94], subCRnd$divCSIB, col="black", lwd=2)
@@ -407,7 +439,7 @@ fossGen <- fossils[!duplicated(collGenus),]
 
 ## ----subFail, echo=TRUE, results =FALSE, plot=TRUE, fig.height=5.5-------
 # basic plot
-  tsplot(stages, shading="series", boxes="per", xlim=51:95,
+  tsplot(stages, shading="series", boxes="sys", xlim=51:95,
     ylab="number of occurrences", ylim=c(0,100))
 # subsampled, without failed  
   withoutFail<-subsample(fossGen, bin="stg", tax="genus", 
@@ -423,7 +455,7 @@ fossGen <- fossils[!duplicated(collGenus),]
 
 ## ----subIntact, echo=TRUE, results =FALSE, plot=TRUE, fig.height=5.5-----
 # basic plot
-  tsplot(stages, shading="series", boxes="per", xlim=51:95,
+  tsplot(stages, shading="series", boxes="sys", xlim=51:95,
     ylab="per capita extinction rates", ylim=c(0,1))
 ## subsampled, excluding the recent occurrences  
   sub <- subsample(corals, bin="stg", tax="genus", iter=100, 
@@ -440,7 +472,7 @@ fossGen <- fossils[!duplicated(collGenus),]
 
 ## ----subOutput, echo=TRUE, results =FALSE, plot=TRUE, fig.height=5.5-----
 # basic plot
-  tsplot(stages, shading="series", boxes="per", xlim=51:95,
+  tsplot(stages, shading="series", boxes="sys", xlim=51:95,
     ylab="richness of genera (corrected SIB)", ylim=c(0,100))
 ## arithmetic mean output
   subArit <- subsample(fossGen, bin="stg", tax="genus", iter=100, q=40, output="arit")
@@ -464,7 +496,7 @@ names(subDist)
 dim(subDist$divCSIB)
 
 ## ----subMultiRes, echo=TRUE, results =FALSE, plot=TRUE, fig.height=5.5----
-tsplot(stages, shading="series", boxes="per", xlim=51:95,
+tsplot(stages, shading="series", boxes="sys", xlim=51:95,
   ylab="subsampled richness of genera (corrected SIB)", ylim=c(0,150))
 
 plottedVar <- subDist$divCSIB
@@ -476,12 +508,12 @@ csibMeans<- apply(plottedVar,1, mean, na.rm=T)
 lines(stages$mid[1:94], csibMeans , col="red", lwd=2)
 
 ## ----shades, echo=TRUE, results =FALSE, plot=TRUE, fig.height=5.5--------
-tsplot(stages, shading="series", boxes="per", xlim=51:95,
+tsplot(stages, shading="series", boxes="sys", xlim=51:95,
   ylab="subsampled richness of genera (corrected SIB)", ylim=c(0,150))
 shades(stages$mid[1:94], plottedVar, res=10, col="black")
 
 ## ----shades100, echo=TRUE, results =FALSE, plot=TRUE, fig.height=5.5-----
-tsplot(stages, shading="series", boxes="per", xlim=51:95,
+tsplot(stages, shading="series", boxes="sys", xlim=51:95,
   ylab="subsampled richness of genera (corrected SIB)", ylim=c(0,150))
 shades(stages$mid[1:94], plottedVar, col="blue", res=c(0.05,0.25,0.75,0.95))
 
@@ -535,14 +567,14 @@ cor.test(maxPaLat, stages$mid[54:94], method="spearman")
 ## ----subPLSmm, echo=TRUE, results =FALSE, plot=TRUE, fig.height=5.5------
 subMaxPaLat <- subsample(fossGen, bin="stg", tax="genus", 
   iter=100, q=20,FUN=PL)
-tsplot(stages, shading="series", boxes="per", xlim=51:95,
-  ylab="maximum sampling paleolatitude", ylim=c(0,90))
+tsplot(stages, shading="series", boxes="sys", xlim=51:95,
+  ylab="maximum sampled paleolatitude", ylim=c(0,90))
 lines(stages$mid[54:94], maxPaLat, col="blue")
 lines(stages$mid[54:94], subMaxPaLat, col="black")
 # legend
 legend("topleft", legend=c("max",
-"subsampled max"), col=c("blue","black"),
-bg="white")
+  "subsampled max"), col=c("blue","black"),
+  bg="white", lty=c(1,1))
 
 cor.test(subMaxPaLat, stages$mid[54:94], method="spearman")
 
@@ -556,7 +588,7 @@ subOW <- subsample(fossGen, bin="stg", tax="genus", coll="collection_no",
 
 ## ----subOW, echo=TRUE, results =FALSE, plot=TRUE, fig.height=5.5---------
 subCR <- subsample(fossGen, bin="stg", tax="genus", iter=100, q=40)
-tsplot(stages, shading="series", boxes="per", xlim=51:95,
+tsplot(stages, shading="series", boxes="sys", xlim=51:95,
   ylab="corrected SIB diversity", ylim=c(0,90))
 lines(stages$mid[1:94], subCR$divCSIB, col="black")
 lines(stages$mid[1:94], subOW$divCSIB, col="blue")
@@ -582,7 +614,7 @@ subST[54:94, "occs"]
 ## ----subO2, echo=TRUE, results =FALSE, plot=TRUE, fig.height=5.5---------
 subO2W <- subsample(fossGen, bin="stg", tax="genus", coll="collection_no", 
   iter=100, q=80, type="oxw", x=2)
-tsplot(stages, shading="series", boxes="per", xlim=51:95,
+tsplot(stages, shading="series", boxes="sys", xlim=51:95,
   ylab="corrected SIB genus richness", ylim=c(0,90))
 lines(stages$mid[1:94], subCR$divCSIB, col="black")
 lines(stages$mid[1:94], subOW$divCSIB, col="blue")
@@ -603,7 +635,7 @@ for(i in quotas){
 }
 
 ## ----subCRmanyShow, echo=TRUE, results =FALSE, plot=TRUE, fig.height=5.5----
-tsplot(stages, shading="series", boxes="per", xlim=51:95,
+tsplot(stages, shading="series", boxes="sys", xlim=51:95,
   ylab="corrected SIB richness", ylim=c(0,90))
 for(i in quotas){
   current <- get(paste("cr", i, sep=""))
@@ -619,7 +651,7 @@ sqs0.3 <-subsample(fossGen, iter=50, q=0.3,
   tax="genus", bin="stg", type="sqs")
 
 # plotting
-tsplot(stages, shading="series", boxes="per", xlim=51:95,
+tsplot(stages, shading="series", boxes="sys", xlim=51:95,
   ylab="corrected SIB richness", ylim=c(0,175))
 lines(stages$mid[1:94], sqs0.6$divCSIB, col="blue")
 lines(stages$mid[1:94], sqs0.3$divCSIB, col="green")
@@ -638,8 +670,8 @@ sqsNoSing <-subsample(fossGen, iter=50, q=0.4,
   tax="genus", bin="stg", type="sqs", singleton=FALSE)
 
 # plotting
-tsplot(stages, shading="series", boxes="per", xlim=51:95,
-  ylab="corrected SIB richness richness", ylim=c(0,100))
+tsplot(stages, shading="series", boxes="sys", xlim=51:95,
+  ylab="corrected SIB richness", ylim=c(0,100))
 lines(stages$mid[1:94], sqsRefSing$divCSIB, col="blue")
 lines(stages$mid[1:94], sqsCollSing$divCSIB, col="black")
 lines(stages$mid[1:94], sqsNoSing$divCSIB, col="red")
@@ -654,8 +686,8 @@ sqsCorr <-subsample(fossGen, iter=50, q=0.5,
  type="sqs", singleton="ref", excludeDominant=T, largestColl=T)
 
 # plotting
-tsplot(stages, shading="series", boxes="per", xlim=51:95,
-  ylab="corrected SIB richness richness", ylim=c(0,100))
+tsplot(stages, shading="series", boxes="sys", xlim=51:95,
+  ylab="corrected SIB richness", ylim=c(0,100))
 lines(stages$mid[1:94], sqsPure$divCSIB, col="blue")
 lines(stages$mid[1:94], sqsCorr$divCSIB, col="black")
 legend("topleft", legend=c("uncorrected SQS", 
@@ -668,8 +700,8 @@ sqsByColl <-subsample(fossGen, iter=50, q=0.5,
  type="sqs", singleton="ref", excludeDominant=T, largestColl=T, byList=TRUE)
 
 # plotting
-tsplot(stages, shading="series", boxes="per", xlim=51:95,
-  ylab="corrected SIB richness richness", ylim=c(0,100))
+tsplot(stages, shading="series", boxes="sys", xlim=51:95,
+  ylab="corrected SIB richness", ylim=c(0,100))
 lines(stages$mid[1:94], sqsByColl$divCSIB, col="blue")
 lines(stages$mid[1:94], sqsCorr$divCSIB, col="black")
 legend("topleft", legend=c("by-list SQS", 
@@ -700,4 +732,16 @@ table(affBin0.5)
 affBin0.1 <- affinity(knownBath, bin="stg", tax="genus", 
   method="binom", env="bath", alpha=0.1)
 table(affBin0.1)
+
+## ----georan1, echo=TRUE, results =TRUE-----------------------------------
+oneTax <- corals[corals$stg==94 & corals$genus=="Acropora",] 
+georange(oneTax, lat="paleolat", lng="paleolng", method="co")
+
+## ----georan2, echo=TRUE, results =TRUE-----------------------------------
+collCount <- function(dat) length(unique(dat$coll))
+allGeo <- tabinate(corals, bin="stg", tax="genus", FUN= collCount)
+
+## ----georan3, echo=TRUE, results =TRUE-----------------------------------
+allGeo <- tabinate(corals, bin="stg", tax="genus", 
+  FUN=georange, lat="paleolat", lng="paleolng", method="co")
 

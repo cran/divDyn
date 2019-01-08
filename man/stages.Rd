@@ -6,8 +6,8 @@
 \title{95 bin Phanerozoic time scale based on the stratigraphic stages of Ogg et al. (2016).}
 \format{A \code{data.frame} with 95 observations and 10 variables:
 	\describe{
-		\item{\code{per}}{Abbreviation of geologic periods.}
-		\item{\code{period}}{Geologic periods.}
+		\item{\code{sys}}{Abbreviations of geologic systems.}
+		\item{\code{system}}{Geologic periods.}
 		\item{\code{series}}{Geologic series.}
 		\item{\code{stage}}{Names of geologic stages.}
 		\item{\code{short}}{Abbreviations of geologic stages.}
@@ -16,6 +16,9 @@
 		\item{\code{top}}{Numeric ages of the tops (latest ages) of the bins.}
 	\item{\code{dur}}{Numeric ages of the durations for the bins.}
 		\item{\code{stg}}{Integer number identifiers of the bins.}
+	\item{\code{systemCol}}{Hexadecimal color code of the systems.}
+	\item{\code{seriesCol}}{Hexadecimal color code of the series.}
+	\item{\code{col}}{Hexadecimal color code of the stages.}
 	}}
 \source{
 Based on Ogg et al. (2016), compiled by Wolfgang Kiessling.
@@ -24,10 +27,10 @@ Based on Ogg et al. (2016), compiled by Wolfgang Kiessling.
 stages
 }
 \description{
-Stage-level timescale used in some analyses.
+Stage-level (age-level) timescale used in some analyses.
 }
 \details{
-This is an example time scale object that can be used in the Phanerozoic scale analyses. Example occurrence datasets related to the package use the variable \code{stg} when referring to this timescale.
+This is an example time scale object that can be used in the Phanerozoic-scale analyses. Example occurrence datasets related to the package use the variable \code{stg} when referring to this timescale.
 }
 \section{References}{
 

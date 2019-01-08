@@ -341,3 +341,173 @@ NumericMatrix CRbinwise(NumericVector binVar, int quota){
 
 	return realEnd;
 }
+
+// collapsing a numeric vector - omit 
+
+// [[Rcpp::export]]
+LogicalVector seqduplicated(NumericVector vect){
+	
+	int length =vect.size();
+	LogicalVector newVect(length);
+	
+	newVect(0) = 0;
+
+
+	for(int i=1;i<length;i++){
+		// handling NAs
+		if(R_IsNA(vect(i)) || R_IsNA(vect(i-1))){
+			// both are NAs
+			if(R_IsNA(vect(i)) && R_IsNA(vect(i-1)))  newVect(i) = 1;
+
+			// first one is NA, the second one not
+			if(!R_IsNA(vect(i)) && R_IsNA(vect(i-1)))  newVect(i) = 0;
+
+			// second one is NA and the first one not
+			if(R_IsNA(vect(i)) && !R_IsNA(vect(i-1)))  newVect(i) = 0;
+
+		//regular values
+		}else{
+			newVect(i) = vect(i)==vect(i-1);
+		}
+		
+	}
+
+	return(newVect);
+
+}
+
+
+// filling in missing entries
+
+// [[Rcpp::export]]
+LogicalVector fillLogical(LogicalVector logic, bool dir){
+	int leng = logic.size();
+	LogicalVector endVect(leng);
+
+	if(dir){
+		//copy first value over
+		endVect(0) = logic(0);
+	
+		for(int i=1; i<leng; i++){
+			// if logic's ith value is missing
+			if(LogicalVector::is_na(logic(i))){
+				// fill in the value in endVect with the previous value
+				endVect(i) = endVect(i-1);
+			
+			// if not
+			}else{
+				// just copy over
+				endVect(i) = logic(i);
+			}
+	
+		}
+	}else{
+		//copy last value over
+		endVect(leng-1) = logic(leng-1);
+
+		for(int i=leng-2; i>=0; i--){
+			// if logic's ith value is missing
+			if(LogicalVector::is_na(logic(i))){
+				// fill in the value in endVect with the previous value
+				endVect(i) = endVect(i+1);
+			
+			// if not
+			}else{
+				// just copy over
+				endVect(i) = logic(i);
+			}
+	
+		}
+	}
+	return(endVect);
+
+}
+
+// [[Rcpp::export]]
+StringVector  fillCharacter(StringVector stri, bool dir){
+	int leng = stri.size();
+	StringVector  endVect(leng);
+
+	if(dir){
+		//copy first value over
+		endVect(0) = stri(0);
+	
+		for(int i=1; i<leng; i++){
+			// if stri's ith value is missing
+			if(StringVector::is_na(stri(i))){
+				// fill in the value in endVect with the previous value
+				endVect(i) = endVect(i-1);
+			
+			// if not
+			}else{
+				// just copy over
+				endVect(i) = stri(i);
+			}
+	
+		}
+	}else{
+		//copy last value over
+		endVect(leng-1) = stri(leng-1);
+
+		for(int i=leng-2; i>=0; i--){
+			// if stri's ith value is missing
+			if(StringVector::is_na(stri(i))){
+				// fill in the value in endVect with the previous value
+				endVect(i) = endVect(i+1);
+			
+			// if not
+			}else{
+				// just copy over
+				endVect(i) = stri(i);
+			}
+	
+		}
+	}
+	return(endVect);
+
+}
+
+
+// [[Rcpp::export]]
+NumericVector fillNumeric(NumericVector num, bool dir, NumericVector inc){
+	int leng = num.size();
+	NumericVector endVect(leng);
+
+	if(dir){
+		//copy first value over
+		endVect(0) = num(0);
+	
+		for(int i=1; i<leng; i++){
+			// if num's ith value is missing
+			if(NumericVector::is_na(num(i))){
+				// fill in the value in endVect with the previous value
+				endVect(i) = endVect(i-1)+inc(0);
+			
+			// if not
+			}else{
+				// just copy over
+				endVect(i) = num(i);
+			}
+	
+		}
+	}else{
+		//copy last value over
+		endVect(leng-1) = num(leng-1);
+
+		for(int i=leng-2; i>=0; i--){
+			// if num's ith value is missing
+			if(NumericVector::is_na(num(i))){
+				// fill in the value in endVect with the previous value
+				endVect(i) = endVect(i+1)+inc(0);
+			
+			// if not
+			}else{
+				// just copy over
+				endVect(i) = num(i);
+			}
+	
+		}
+	}	
+	return(endVect);
+
+}
