@@ -1,24 +1,65 @@
-# Change log of the R package 'divDyn'
+# divDyn
+R package for quantifying diversity dynamics using fossil sampling data
 
-## [0.8.1 (build 740)]  - 2021-03-01
-### Changed
-- documentation fixes
+![](https://github.com/divDyn/assets/raw/master/logo/divDyn_logo_min.png)
 
-## [0.8.0 (build 739)]  - 2021-02-26
-### Changed
-- binwise CR subsampling now implements std::shuffle() instead of std::random_shuffle()
+## News
 
-## [0.8.0 (build 738)]  - 2020-08-16
-### Changed
-- bugfix of cleansp() that produced Gen_NA when there was a subspecies but no species name
-- fix for "subgenus"
+- The next update of the package (V0.8.0) is now availble from the CRAN servers! As this is a major update, I suggest everyone to update their copy. See the change log below for the changes. 
+
+- The paper describing the package is available from the Wiley Online Library. You can download it from this link:
+https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13161 
+(or contact me, if you have problems). If you decide to use the methods implemented in this package, please refer to this document. The examples implemented can be reproduced with the files deposited at
+https://github.com/divDyn/ddPhanero
+using this (updated) vignette:
+https://github.com/divDyn/ddPhanero/blob/master/doc/dd_phanero_web.html
 
 
-## [0.8.0 (build 737)]  - 2020-08-16
-### Changed
-- minor bugfix for the cleansp() function involving taxa that were missing ("")
-- cleansp()'s default changed from subgenera=FALSE to subgenera=TRUE
+## About the package
 
+If you are interested in what this package does, or have questions about its use, please check out the first vignette: 'Handout to the R package 'divDyn' v0.8.0 for diversity dynamics from fossil occurrence data' here:
+https://github.com/divDyn/r_package/blob/master/vignettes/handout.pdf
+
+As the package is still getting developed, please note that some interface changes might occurr based on the feedback of people and my own experience on what is easier to use. If you have any requirements or recommendations about what to add (or more importantly, if you find a mistake), do not hesitate to contact me at adam.kocsis@fau.de.
+
+
+## Installing 
+
+### 1. From CRAN (v0.8.0)
+
+You can install the appropriate binaries normally, by running 
+`install.packages("divDyn")`
+
+### 2. Using manually pre-built binaries (v0.8.0)
+
+I have updated the windows binaries so they work with the latest internals (3.6). If you want to use the binaries, please update your R to at least 3.6.
+
+- If you have a windows computer, you can install the package with the following R command:
+  `install.packages("https://github.com/divDyn/assets/raw/master/r_archive/bin/Win_x64_x86/divDyn_0.8.0.zip", repos=NULL, type="win.binary")`
+
+### 3. Using the source tarball to install (v0.8.0)
+This you can do with running
+```
+install.packages(
+  "https://github.com/divDyn/assets/raw/master/r_archive/source/divDyn_0.8.0.tar.gz", 
+  repos=NULL, type="source")
+```
+
+from the R console. Note that there is some code in the package that requires compilation. To do this, the most straightforward way is to install/use Rtools (https://cran.r-project.org/bin/windows/Rtools/) on Windows, and XCode https://developer.apple.com/xcode/ on Mac.
+
+The sources of the older versions are also in the _archive/source folder. You can access earlier versions by changing the version number in the command above.
+
+### 4. Using the repository files and 'devtools' to install (v0.8.0)
+
+To do this:
+- You need a compiler, as for method 3
+- Make sure that the 'devtools' package is installed
+- Run `devtools::install_github("divDyn/r_package")`
+
+If the frist method is not working for you, and you do not want to mess around with a compiler and such, then contact me and I will find a way to compile binaries for you.
+
+
+# Change log
 
 ## [0.8.0 (build 736)]  - 2019.06.12 
 ### Added
@@ -55,7 +96,6 @@
 - The function subsample() crashed when FUN was set to 'divDyn', and the output resulting from its application on the subsample trial dataset did not have have the same dimensions as the result of divDyn() when it was applied to the total dataset. Note that this matching of the 'trial results' is only viable when the data.frame output of FUN has a 'rownames' attribute. 
 
 
-
 ## [0.7.1 (build 670)]  - 2019.02.18 
 ### Added
 - A lot of people reported problems with the direction of time in the divDyn() function. A startup message is added as a reminder of the arbitrary decision I had to make when designing the function. 
@@ -72,8 +112,8 @@
 - The main divDyn() function produced warnings ('In cbind(bin = aubi$z, dCountsAndMetrics)'') when the automatic binning was used ('breaks 'argument) and when the provided interval had younger parts than the occurrence data. The results are the same, the warnings are no longer produced.
 - Problems with the 'reldat' argument of the affinity() function
 
-
-## [0.7.0 (build 642)] - 2019.01.08 
+  
+## [0.7.0 (build 642)]  - 2019.01.08 
 ### Added
 - the georange() function for geographic range estimation from a set of coordinates (suggesting the vegan and the icosa packages)
 - the tabinate() function for iterating procedures on taxon/time slice subsets of the data
@@ -84,7 +124,7 @@
 - To make the contents of the 'stages' object consistent with its name, the former geochronological entries are replaced with their chronostratigraphic counterparts. The columns per, period and periodCol were replaced with 'sys', 'system' and 'systemCol', table entries with 'Early' and 'Late' qualifiers were replaced with 'Lower' and 'Upper', respectively. The vignettes are adjusted to work with these changes. 
 
 
-## [0.6.3] - 2018.12.12
+## [0.6.3] - 2018.12.21
 ### Added
 - The modeltab() function 
 - the fill() utility function
@@ -98,14 +138,15 @@
 - bin processing in divDyn() had potential issues with negative integer bin numbers
 
 ### Deleted
-- The inf argument of divDyn(), that an unncessary complication
+- The inf argument of divDyn() 
+
 
 ## [0.6.2] - 2018.10.22
 ### Added
 - The collapse() and seqduplicated() utility functions.
-- The 'zerodur' argumnet to the fadlad() function
+- The 'zerodur' argument to the fadlad() function
 - Hexadecimal colour values to the 'stages' table.
-- The 'boxes.col' argumnet is added to the tsplot() function to plot these colours.
+- The 'boxes.col' argument is added to the tsplot() function to plot these colours.
 - The 'labels' argument to the the tsplot() function, that allows the user not to plot the labels within the boxes.
 
 ### Changed/Fixed
@@ -128,7 +169,6 @@
 - the indices() function to calculate some basic diversity indices within the package. Please feel encouraged to use the rest from the 'vegan' package.
 - the binstat() and sumstat() functions. Binstat calculates bin-specific indices and sampling metrics, sumstat() calculates those relevant for the entire occurrence database. Most functionality of the deprecated sampstat() function is in binstat. 
 - forgotten proper cleanup of dynamic libraries upon package unload
-
 
 ## Changed
 - material in the sampstat() function was reorganized to two separate functions, see above

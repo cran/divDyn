@@ -2,25 +2,26 @@
 #' 
 #' This function will take a vector of binomial names with various qualifiers of open nomenclatures, and removes them form the vector entries. Only the the genus and species names will remain.
 #'
-#' This version will not keep subgenera, and will assign species to the base genus. The following qualifiers will be omitted:
+#' This version will keep subgenera, and will not assign species to the base genus. The following qualifiers will be omitted:
 #' \emph{"n."}, \emph{"sp."}, \emph{"?"}, \emph{"gen."}, \emph{"aff."}, \emph{"cf."}, \emph{"ex gr."}, \emph{"subgen."}, \emph{"spp"} and informal species designated with letters. Entries with \emph{"informal"} and \emph{"indet."} in them will also be invalidated. 
 #' 
-#' Functions called by the \code{misspells} and \code{stems} arguments were written by Gwen Antell. 
 #' @param x \code{(character)}: the vector containing species names with qualifiers of open taxonomy.
 #'
 #' @param debug \code{(logical)}: \code{FALSE} will return the cleaned species name vector, \code{TRUE} returns a data table that allows one by one checking.
 #' @param collapse \code{(character)}: This argument will be passed to the paste function's argument of the same name. The character value to be inserted between the genus and species names.
-#' @param subgenera \code{(logical)}: \code{FALSE} omits subgenus information (in parentheses) and will construct a unique binomen based on the genus and species names alone. \code{TRUE} will promote the subgenus names and it will create a new binomen based on the subgenus rather than the genus name.
+#' @param subgenera \code{(logical)}: \code{FALSE} omits subgenus information (in parentheses) and will construct a unique binomen based on the genus and species names alone. \code{TRUE} (default) will promote the subgenus names and it will create a new binomen based on the subgenus rather than the genus name.
 #' @param stems \code{(logical)}: Setting this to \code{TRUE} will omit the adjective declination suffices from the species names. 
 #' @param misspells \code{logical}: Resolution of common spelling mistakes, such as diphtongs and alternate spellings: 'ue' is replaced with 'u', 'ae' is replaced with 'e', 'll' with 'l', 'ss' with 's'and 'y' with 'i'. 
+#' @author Adam T. Kocsis, Gwenn Antell. Adam T. Kocsis wrote the main body of the function, subroutines called by the \code{misspells} and \code{stems} are the modified work of Gwen Antell. 
 #' @examples
 #' examp <- c("Genus cf. species", "Genus spp.", "Family indet.", 
 #'   "Mygenus yourspecies", "Okgenus ? questionsp", 
 #'   "Genus (cf. Subgenus) aff. species")
 #' cleansp(examp) 
 #' @export
+#' @return A data.frame or character vector. 
 # function to cleanse a noisy species name vector
-cleansp <- function(x, debug=FALSE, collapse="_", subgenera=FALSE, misspells=TRUE, stems=TRUE){
+cleansp <- function(x, debug=FALSE, collapse="_", subgenera=TRUE, misspells=TRUE, stems=TRUE){
 	
 	# keep the original
 	vecOrig<-x
@@ -47,7 +48,7 @@ cleansp <- function(x, debug=FALSE, collapse="_", subgenera=FALSE, misspells=TRU
 	dual<-lapply(split, function(w){
 	# missing entries
 		if(sum(is.na(w))==length(w)){
-			return(NA, NA)
+			return(c(NA, NA))
 		}
 	
 	#is a name starting with quotes - remove quotes
@@ -127,8 +128,15 @@ cleansp <- function(x, debug=FALSE, collapse="_", subgenera=FALSE, misspells=TRU
 				w[1] <- subgen
 			}
 		}
-		
+		# again remove any potential quotes (subgenus names?)
+		w <- gsub("\"", "", w)
 
+		
+		# in case some genus (subgenus) was there, but no species
+		if(length(w)==1){
+			return(c(NA, NA))
+
+		}
 	# roots
 		
 		

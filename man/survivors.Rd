@@ -4,8 +4,14 @@
 \alias{survivors}
 \title{Proportions of survivorship}
 \usage{
-survivors(x, tax = "genus", bin = "stg", method = "forward",
-  noNAStart = FALSE, fl = NULL)
+survivors(
+  x,
+  tax = "genus",
+  bin = "stg",
+  method = "forward",
+  noNAStart = FALSE,
+  fl = NULL
+)
 }
 \arguments{
 \item{x}{\code{(data.frame)} The data frame containing fossil occurrences.}
@@ -20,6 +26,9 @@ survivors(x, tax = "genus", bin = "stg", method = "forward",
 so the first row will contain the estimates for the lowest bin number.}
 
 \item{fl}{\code{(matrix} or \code{data.frame}). If so desired, the function can be run on an FAD-LAD dataset, output by the \code{\link{fadlad}} function.}
+}
+\value{
+A numeric matrix of survivorship probabilities.
 }
 \description{
 This function will calculate both forward and backward survivorship proportions from a given occurrence dataset or FAD-LAD matrix.

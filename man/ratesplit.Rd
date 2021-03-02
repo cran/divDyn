@@ -4,9 +4,18 @@
 \alias{ratesplit}
 \title{Test of rate split (selectivity)}
 \usage{
-ratesplit(x, sel, tax = "genus", bin = "stg", rate = "pc",
-  method = "AIC", AICc = TRUE, na.rm = TRUE, alpha = NULL,
-  output = "simple")
+ratesplit(
+  x,
+  sel,
+  tax = "genus",
+  bin = "stg",
+  rate = "pc",
+  method = "AIC",
+  AICc = TRUE,
+  na.rm = TRUE,
+  alpha = NULL,
+  output = "simple"
+)
 }
 \arguments{
 \item{x}{\code{(data.frame)}: The fossil occurrence data.}
@@ -28,6 +37,9 @@ ratesplit(x, sel, tax = "genus", bin = "stg", rate = "pc",
 \item{alpha}{\code{(numeric)}: Threshold to discriminate between meaningful and meaningless split. If \code{method="AIC"}, the value corresponds to the minimum weight value the dual model should have. By default it is \code{0.89}, which corresponds to the likelihood ratio of 8. If \code{method="binom"}, the value corresponds to the alpha value of the binomial test (default: 0.05). If \code{method="combine"} than two alpha values are required (1st for the AIC, 2nd for the binomial test). If alpha is \code{NULL}, than the default values will be used.}
 
 \item{output}{\code{(character)}: Either \code{"simple"} or \code{"full"}. \code{"simple"} returns the indices of the series where selectivity can be suggested. \code{"full"} returns a \code{matrix} of Akaike weights, or binomial probabilities.}
+}
+\value{
+A list of two numeric vectors.
 }
 \description{
 This function will determine whether there are meaningful differences between the taxonomic rates in the individual time bins of two subsets of an occurrence database.

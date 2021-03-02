@@ -4,8 +4,15 @@
 \alias{omit}
 \title{Omission of taxa that have a poor occurrence record}
 \usage{
-omit(x, om = "ref", tax = "genus", bin = "bin", coll = NULL,
-  ref = NULL, filterNA = FALSE)
+omit(
+  x,
+  om = "ref",
+  tax = "genus",
+  bin = "bin",
+  coll = NULL,
+  ref = NULL,
+  filterNA = FALSE
+)
 }
 \arguments{
 \item{x}{\code{(data.frame)} Occurrence dataset, with \code{bin}, \code{tax} and \code{coll} as column names.}
@@ -21,6 +28,9 @@ omit(x, om = "ref", tax = "genus", bin = "bin", coll = NULL,
 \item{ref}{\code{(character)} The variable name of the reference identifiers (optional).}
 
 \item{filterNA}{\code{(logical)} Additional entries can be added to influence the dataset that might not have reference or collection information (\code{NA} entries). These occurrences are treated as single-collection or single-reference taxa if the \code{na.rm} argument is set to \code{FALSE} (default). Setting this argument to \code{TRUE} will keep these entries. (see example)}
+}
+\value{
+A logical vector.
 }
 \description{
 Function to quickly omit single-collection and single-reference taxa.
@@ -50,6 +60,6 @@ The function returns a \code{logical} vector, with a value for each row. \code{T
   
   # legend
   legend("topleft", legend=c("no single-ref. taxa", 
-    "no single-ref. taxa,\\n with recent"), 
+    "no single-ref. taxa,\n with recent"), 
     col=c("red", "blue"), lwd=c(2,2))
 }

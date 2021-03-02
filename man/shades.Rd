@@ -4,8 +4,16 @@
 \alias{shades}
 \title{Quantile plot of time series}
 \usage{
-shades(x, y, col = "black", res = 10, border = NA,
-  interpolate = FALSE, method = "symmetric", na.rm = FALSE)
+shades(
+  x,
+  y,
+  col = "black",
+  res = 10,
+  border = NA,
+  interpolate = FALSE,
+  method = "symmetric",
+  na.rm = FALSE
+)
 }
 \arguments{
 \item{x}{\code{(numeric)}: The x coordinates.}
@@ -23,6 +31,9 @@ shades(x, y, col = "black", res = 10, border = NA,
 \item{method}{\code{(character)}: The default \code{"symmetric"} method will plot the mid quantile range with highest opacity and the shades will be more translucent at the tails of the distributions. The \code{"decrease"} method will decrease the opacity with higher quantiles, which can make more sense for bottom-bounded distributions (e.g. exponential).}
 
 \item{na.rm}{\code{(logical)}: If set to \code{FALSE}, than rows that are missing from the dataset will be plotted as gaps in the shading. If set to \code{TRUE}, than these gaps will be skipped.}
+}
+\value{
+The function has no return value.
 }
 \description{
 This intermediate-level function will plot a time series with the quantiles shown with transparency values.

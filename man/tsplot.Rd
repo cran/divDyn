@@ -4,12 +4,27 @@
 \alias{tsplot}
 \title{Time series plotting using a custom time scale}
 \usage{
-tsplot(tsdat, ylim = c(0, 1), xlim = NULL, prop = 0.05, gap = 0,
-  bottom = "bottom", top = "top", xlab = "Age (Ma)", ylab = "",
-  boxes = NULL, boxes.col = NULL, shading = NULL,
-  shading.col = c("white", "gray80"), plot.args = NULL,
-  boxes.args = NULL, labels = TRUE, labels.args = NULL,
-  lplab = TRUE, rplab = TRUE)
+tsplot(
+  tsdat,
+  ylim = c(0, 1),
+  xlim = NULL,
+  prop = 0.05,
+  gap = 0,
+  bottom = "bottom",
+  top = "top",
+  xlab = "Age (Ma)",
+  ylab = "",
+  boxes = NULL,
+  boxes.col = NULL,
+  shading = NULL,
+  shading.col = c("white", "gray80"),
+  plot.args = NULL,
+  boxes.args = NULL,
+  labels = TRUE,
+  labels.args = NULL,
+  lplab = TRUE,
+  rplab = TRUE
+)
 }
 \arguments{
 \item{tsdat}{\code{(data frame)}: The time scale data frame.}
@@ -49,6 +64,9 @@ tsplot(tsdat, ylim = c(0, 1), xlim = NULL, prop = 0.05, gap = 0,
 \item{lplab}{\code{logical}: When the left boundary of the plot does not match with any of the boundaries of the time scale boxes (and \code{labels=TRUE}), should the label of the partially drawn box be plotted?}
 
 \item{rplab}{\code{logical}: When the right boundary of the plot does not match with any of the boundaries of the time scale boxes (and \code{labels=TRUE}), should the label of the partially drawn box be plotted?}
+}
+\value{
+The function has no return value.
 }
 \description{
 This function allows the user to quickly plot a time scale data table

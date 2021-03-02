@@ -4,9 +4,17 @@
 \alias{binstat}
 \title{Sampling statistics and diversity indices in every bin}
 \usage{
-binstat(x, tax = "genus", bin = "stg", coll = NULL, ref = NULL,
-  noNAStart = FALSE, duplicates = NULL, xexp = NULL,
-  indices = FALSE)
+binstat(
+  x,
+  tax = "genus",
+  bin = "stg",
+  coll = NULL,
+  ref = NULL,
+  noNAStart = FALSE,
+  duplicates = NULL,
+  xexp = NULL,
+  indices = FALSE
+)
 }
 \arguments{
 \item{x}{\code{(data.frame)}: The occurrence dataset.}
@@ -27,6 +35,9 @@ binstat(x, tax = "genus", bin = "stg", coll = NULL, ref = NULL,
 
 \item{indices}{(\code{logical}): Setting this value to \code{TRUE} will calculate all indices implemented in (\code{\link{indices}}).}
 }
+\value{
+A data.frame with rows corresponding to bin entries.
+}
 \description{
 This function will return the basic sampling summaries of a dataset
 }
@@ -42,7 +53,7 @@ By setting \code{total} to \code{FALSE} (default), the following results are out
 
 \code{colls}: The number of collections in each time bin.
 
-\code{xQuota}: The maximum quota for OxW subsampling (\code{\link{subtrialOXW}}) with the given \code{xexp} value. 
+ \code{xQuota}: The maximum quota for OxW subsampling (\code{\link{subtrialOXW}}) with the given \code{xexp} value. 
 	The number of occurrences in each collection is tabulated, and is raised to the power of \code{xexp}. 
 	The \code{xQuota} value is the sum of these values across all collections in a time slice.
 

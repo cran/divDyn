@@ -4,10 +4,24 @@
 \alias{ranges}
 \title{Plotting ranges and occurrence distributions through time}
 \usage{
-ranges(dat, bin = NULL, tax = NULL, xlim = NULL, ylim = c(0, 1),
-  total = "", filt = "include", occs = FALSE, labs = FALSE,
-  decreasing = TRUE, group = NULL, gap = 0, labels.args = NULL,
-  ranges.args = NULL, occs.args = NULL, total.args = NULL)
+ranges(
+  dat,
+  bin = NULL,
+  tax = NULL,
+  xlim = NULL,
+  ylim = c(0, 1),
+  total = "",
+  filt = "include",
+  occs = FALSE,
+  labs = FALSE,
+  decreasing = TRUE,
+  group = NULL,
+  gap = 0,
+  labels.args = NULL,
+  ranges.args = NULL,
+  occs.args = NULL,
+  total.args = NULL
+)
 }
 \arguments{
 \item{dat}{\code{(data.frame)}: The occurrence dataset or the FAD-LAD dataset that is to be plotted. The FAD dataset must have numeric variables named \code{"FAD"} and \code{"LAD"}. Taxon ranges will be searched for in the \code{row.names} attribute of the table.}
@@ -41,6 +55,9 @@ ranges(dat, bin = NULL, tax = NULL, xlim = NULL, ylim = c(0, 1),
 \item{occs.args}{(\code{list}): Arguments that will be passed to the \code{\link[graphics]{points}} or \code{\link[graphics]{segments}} functions that draw the occurence points/lines. If you provided two \code{bin} columns, occurrence lines will be drawn instead of points. If valid grouping is present (see argument \code{group}), then vector entries will be distributed across the groups (see examples.)}
 
 \item{total.args}{(\code{list}): Arguments that will be passed to the \code{\link[graphics]{text}} function that draws the \code{total} label. If valid grouping is present (see argument \code{group}), then vector entries will be distributed across the groups (see examples.)}
+}
+\value{
+The function has no return value.
 }
 \description{
 Visualization of occurrence data

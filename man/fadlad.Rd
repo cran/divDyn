@@ -4,8 +4,15 @@
 \alias{fadlad}
 \title{FAD - LAD matrix from occurrence data}
 \usage{
-fadlad(x, tax, bin = NULL, age = NULL, revtime = FALSE,
-  na.rm = TRUE, diffbin = TRUE)
+fadlad(
+  x,
+  tax,
+  bin = NULL,
+  age = NULL,
+  revtime = FALSE,
+  na.rm = TRUE,
+  diffbin = TRUE
+)
 }
 \arguments{
 \item{x}{\code{(data.frame)}: Occurrence data.}
@@ -21,6 +28,9 @@ fadlad(x, tax, bin = NULL, age = NULL, revtime = FALSE,
 \item{na.rm}{\code{(logical)}: Should taxa that have no valid FADs or LADs (due to \code{NA} entries) be removed from the output?}
 
 \item{diffbin}{\code{(logical)}: Difference-based duration for discreet time (only applicabble to cases when \code{bin} is provided). If set to \code{TRUE}, single-interval taxa will \code{0} durations. Setting this argument to \code{FALSE} will add code{1} to the durations of all taxa.}
+}
+\value{
+A data.frame, with rows corresponding to \code{tax} entries.
 }
 \description{
 Function to generate range data from an occurrence dataset.
