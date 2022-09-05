@@ -60,7 +60,7 @@
 #'  
 #' @format A \code{list} of 7 \code{list}s:
 #' 	\describe{
-#' 		\item{\code{tenInt}}{A \code{list} of \code{vector}s. Entries in the \code{early_interval} and \code{late_interval} variables of PaleoDB downloads indicate the collections' positions in the dynamic time scale. These entries were linked to 10 million year-resolution time scale stored in \code{\link{tens}}. These links were compiled using a download from the FossilWorks website (\url{http://fossilworks.org/}), on 08 June, 2018. You can check the lookup table \code{\link{stratkeys}} here. This is version 0.9.2}
+#' 		\item{\code{tenInt}}{A \code{list} of \code{vector}s. Entries in the \code{early_interval} and \code{late_interval} variables of PaleoDB downloads indicate the collections' positions in the dynamic time scale. These entries were linked to 10 million year-resolution time scale stored in \code{\link{tens}}. These links were compiled using a download from the FossilWorks website (\url{http://www.fossilworks.org/}), on 08 June, 2018. You can check the lookup table \code{\link{stratkeys}} here. This is version 0.9.2}
 #' 		\item{\code{stgInt}}{A \code{list} of \code{vector}s. Entries in the \code{early_interval} and \code{late_interval} variables of PaleoDB downloads indicate the collections' positions in the dynamic time scale. These entries were linked to stage-resolution time scale stored in \code{\link{stages}}. See \code{binInt} for version information.} These entries are reliable only in the Post-Ordovician!
 #' 		\item{\code{reefs}}{A \code{list} of \code{vector}s. Entries in the \code{environment} field of the PaleoDB download indicate information regarding the likely reefal origin of carbonatic rocks. See the vignette ('§PhaneroCurve') on the exact use of these data. v0.9.}
 #' 		\item{\code{lith}}{A \code{list} of \code{vector}s. Entries in the \code{lithology1} field of the PaleoDB download indicate information regarding the substrate of the embedding rocks. This key maps the entries to \code{siliciclastic}, \code{"carbonate"} or \code{"unknown"} substrates. v0.9.}
@@ -70,15 +70,16 @@
 #' 
 #' 	}
 #' 
-#' @source Stratigraphic assignments are based on the download of collection data from Fossilworks (\url{http://fossilworks.org/}) and the dynamic time scale of the Paleobiology Database, written by J. Alroy. The assignment of numeric values were done by A. Kocsis. Environmental variables were grouped by W. Kiessling.
+#' @source Stratigraphic assignments are based on the download of collection data from Fossilworks (\url{http://www.fossilworks.org/}) and the dynamic time scale of the Paleobiology Database, written by J. Alroy. The assignment of numeric values were done by A. Kocsis. Environmental variables were grouped by W. Kiessling.
 #' @usage data(keys)
 "keys"
 
-#' 95 bin Phanerozoic time scale based on the stratigraphic stages of Ogg et al. (2016).
+#' 95 bin Phanerozoic time scale based on the stratigraphic stages of Ogg et al. (2016) with updated dates in some intervals (2018).
 #' 
 #' Stage-level (age-level) timescale used in some analyses.
 #' 
 #' This is an example time scale object that can be used in the Phanerozoic-scale analyses. Example occurrence datasets related to the package use the variable \code{stg} when referring to this timescale.
+#' This is the \code{stages} object used until divDyn version 0.8.1.
 #' 
 #' @format A \code{data.frame} with 95 observations and 10 variables:
 #' 	\describe{
@@ -100,8 +101,38 @@
 #' @source Based on Ogg et al. (2016), compiled by Wolfgang Kiessling.
 #' @section References:
 #' Ogg, J. G., G. Ogg, and F. M. Gradstein. 2016. A concise geologic time scale: 2016. Elsevier.
+#' @usage data(stages2018)
+"stages2018"
+
+#' 95 bin Phanerozoic time scale based on the stratigraphic stages of Gradstein et al. 2020.
+#' 
+#' Stage-level (age-level) timescale used in some analyses.
+#' 
+#' This is an example time scale object that can be used in the Phanerozoic-scale analyses. Example occurrence datasets related to the package use the variable \code{stg} when referring to this timescale. This version uses the longer Rhaetian option.
+#' 
+#' @format A \code{data.frame} with 95 observations and 10 variables:
+#' 	\describe{
+#' 		\item{\code{sys}}{Abbreviations of geologic systems.}
+#' 		\item{\code{system}}{Geologic periods.}
+#' 		\item{\code{series}}{Geologic series.}
+#' 		\item{\code{stage}}{Names of geologic stages.}
+#' 		\item{\code{short}}{Abbreviations of geologic stages.}
+#' 		\item{\code{bottom}}{Numeric ages of the bottoms boundaries (earliest ages) of the bins.}
+#' 		\item{\code{mid}}{Numeric age midpoints of the bins, the averages of \code{bottom} and \code{top}.}
+#' 		\item{\code{top}}{Numeric ages of the tops (latest ages) of the bins.}
+#'		\item{\code{dur}}{Numeric ages of the durations for the bins.}
+#' 		\item{\code{stg}}{Integer number identifiers of the bins.}
+#'		\item{\code{systemCol}}{Hexadecimal color code of the systems.}
+#'		\item{\code{seriesCol}}{Hexadecimal color code of the series.}
+#'		\item{\code{col}}{Hexadecimal color code of the stages.}
+#' 	}
+#' 
+#' @source Based on Gradstein et al. (2020).
+#' @section References:
+#' Gradstein, F. M., Ogg, J. G., & Schmitz, M. D. (2020). The geologic time scale 2020. Elsevier.
 #' @usage data(stages)
 "stages"
+
 
 
 #' The 10 million year resolution timescale of the Paleobiology Database
@@ -132,7 +163,7 @@
 #' 
 #' Table including the user-chosen interval data and the stratigraphic units of the dynamic timescale.
 #' 
-#' Since the separation of the FossilWorks (\url{http://fossilworks.org/}) portal from the Paleobiology Database (\url{https://paleobiodb.org/}) the access to the stratigraphic information in the database have been problematic. This table includes groupings of 
+#' Since the separation of the FossilWorks (\url{http://www.fossilworks.org/}) portal from the Paleobiology Database (\url{https://paleobiodb.org/}) the access to the stratigraphic information in the database have been problematic. This table includes groupings of 
 #' \code{early_interval}/\code{max_interval} entries of the dynamic timescale that users can choose during collection entry. The table assigns these intervals to some corresponding stratigraphic units from different time scales.
 #' These entries were distilled from those collections that only have a \code{max_interval} value. As there is a mismatch between the data Paleobiology Database and FossilWorks this list is not comprehensive and a couple entries are probably missing. For this reason, this dataset is expected to be updated in the future. 
 #' 
@@ -149,6 +180,6 @@
 #' 		\item{\code{stg}}{Numeric identifier of the interval in the stage-level time scale provided as \code{\link{stages}} object.}
 #' 	}
 #' 	
-#' @source \url{http://fossilworks.org/}
+#' @source \url{http://www.fossilworks.org/}
 #' @usage data(stratkeys)
 "stratkeys"

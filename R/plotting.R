@@ -299,7 +299,7 @@ tsplot<-function(tsdat,  ylim=c(0,1), xlim=NULL, prop=0.05, gap=0,
 			)
 
 			# hierarchical input 
-			if(class(boxes.args[[1]])=="list"){
+			if(inherits(boxes.args[[1]],"list")){
 				if(length(boxes.args)!=length(boxes)) stop("Number of lists in 'boxes.args' is not the same as the length of 'boxes'")
 				boxes.argsIn <- boxes.args[[j]]
 			}else{
@@ -342,7 +342,7 @@ tsplot<-function(tsdat,  ylim=c(0,1), xlim=NULL, prop=0.05, gap=0,
 				)
 
 				# hierarchical input 
-				if(class(labels.args[[1]])=="list"){
+				if(inherits(labels.args[[1]],"list")){
 					if(length(labels.args)!=length(boxes)) stop("Number of lists in 'labels.args' is not the same as the length of 'boxes'")
 					labels.argsIn <- labels.args[[j]]
 				}else{
@@ -702,6 +702,11 @@ parts<-function(x, b=NULL, ord="up", prop=FALSE, plot=TRUE,  col=NULL, xlim=NULL
 		
 	}
 		
+	# any empty quotes? Highligt!
+	if(length(which(b==""))>0){
+		warning("Empty quotes (\"\") found among categories!")
+		b[which(b=="")] <- "<empty quotes>"
+	}
 	# the unique entries
 	bLevs<-unique(b)
 	

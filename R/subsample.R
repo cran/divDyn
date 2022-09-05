@@ -105,7 +105,23 @@
 #' @rdname subsample
 #' @return Either a list of replicates or an object matching the class of \code{FUN}.
 #' @export
-subsample<- function(x, q, tax=NULL, bin=NULL,  FUN=divDyn, coll=NULL, iter=50,  type="cr", keep=NULL, rem=NULL, duplicates=TRUE,  output="arit",  useFailed=FALSE, FUN.args=NULL, na.rm=FALSE, counter=TRUE, ...){
+subsample<- function(x,
+	q,
+	tax=NULL,
+	bin=NULL,
+	FUN=divDyn,
+	coll=NULL,
+	iter=50,
+	type="cr",
+	keep=NULL,
+	rem=NULL,
+	duplicates=TRUE,
+	output="arit",
+	useFailed=FALSE,
+	FUN.args=NULL,
+	na.rm=FALSE,
+	counter=TRUE,
+	...){
 	
 	# 0. rename arguments to make sure it is not interpreted as a closure anywhere
 	quoVar <- q
@@ -139,7 +155,10 @@ subsample<- function(x, q, tax=NULL, bin=NULL,  FUN=divDyn, coll=NULL, iter=50, 
 			if(na.rm){
 				if(sum(bTaxNA)>0) x <- x[!bTaxNA,]
 			}else{
-				if(sum(bTaxNA)>0) stop("The 'tax' variable includes NAs.")
+				if(sum(bTaxNA)>0){
+					warning("The 'tax' variable includes NAs.")
+					x <- x[!bTaxNA,]
+				}
 			}
 		}
 
@@ -153,10 +172,15 @@ subsample<- function(x, q, tax=NULL, bin=NULL,  FUN=divDyn, coll=NULL, iter=50, 
 				# logical
 				bVar<- x[,bin, drop=TRUE]
 				bBinNA <- is.na(bVar)
+
+				# depending on whether this is indicated, provide a warning
 				if(na.rm){
 					if(sum(bBinNA)>0) x <- x[!bBinNA,]
 				}else{
-					if(sum(bBinNA)>0) stop("The 'bin' variable includes NAs.")
+					if(sum(bBinNA)>0){
+						warning("The 'bin' variable includes NAs.")
+						x <- x[!bBinNA,]
+					}
 				}
 
 				if(sum(x[,bin, drop=TRUE]%%1)>0) stop("The bin column may only contain integers.")
@@ -171,8 +195,14 @@ subsample<- function(x, q, tax=NULL, bin=NULL,  FUN=divDyn, coll=NULL, iter=50, 
 		if(!is.null(FUN) & !is.function(FUN)) stop("The argument 'FUN' has to be a function or 'NULL'.")
 		
 		# match function
-		if(!is.null(FUN)) FUN<-match.fun(FUN)
-	
+		if(!is.null(FUN)) {
+			FUN<-match.fun(FUN)
+
+			# stop if bins are not provided for divDyn()
+			if(identical(FUN, divDyn) & is.null(bin)) stop("You cannot run the divDyn() function without bins.")
+		}
+
+		
 		# iter - complete
 		if(length(iter)!=1) stop("Only a single number of iterations is allowed.")
 		if(!is.numeric(iter)) stop("The entered number of iterations is not numeric.")
